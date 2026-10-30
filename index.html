@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Patisserie Vanilla - باتيسري فانيلا</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --pink-main: #E8A5B8;
@@ -31,8 +32,9 @@
             background-color: var(--pink-main);
             color: var(--white);
             text-align: center;
-            padding: 2.5rem 1rem;
+            padding: 2.5rem 1rem 1.5rem;
             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            position: relative;
         }
 
         header h1 {
@@ -46,6 +48,37 @@
             opacity: 0.95;
         }
 
+        /* زر السلة في الهيدر */
+        .cart-icon-btn {
+            position: absolute;
+            top: 20px;
+            left: 25px;
+            background: var(--white);
+            color: var(--pink-dark);
+            padding: 10px 18px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .cart-icon-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .cart-count {
+            background: var(--pink-dark);
+            color: white;
+            border-radius: 50%;
+            padding: 2px 8px;
+            font-size: 0.85rem;
+        }
+
+        /* أزرار الفلترة */
         .filter-container {
             display: flex;
             justify-content: center;
@@ -134,32 +167,144 @@
 
         .card-body h3 {
             color: var(--pink-dark);
-            margin-bottom: 0.6rem;
+            margin-bottom: 0.4rem;
             font-size: 1.3rem;
         }
 
         .card-body p {
             font-size: 0.95rem;
             color: #666;
-            margin-bottom: 1rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .order-btn, .add-cart-btn {
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s ease;
+            text-decoration: none;
+            flex: 1;
+            font-size: 0.9rem;
         }
 
         .order-btn {
             background-color: var(--pink-main);
             color: var(--white);
-            border: none;
-            padding: 10px 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            width: 100%;
-            transition: background 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
         }
 
         .order-btn:hover {
             background-color: var(--pink-dark);
+        }
+
+        .add-cart-btn {
+            background-color: var(--pink-soft);
+            color: var(--pink-dark);
+        }
+
+        .add-cart-btn:hover {
+            background-color: #f1d2dd;
+        }
+
+        /* قسم السوشيال ميديا والتواصل */
+        .social-section {
+            text-align: center;
+            padding: 2.5rem 1rem;
+            background: var(--white);
+            margin-top: 3rem;
+            border-top: 2px solid var(--pink-soft);
+        }
+
+        .social-section h3 {
+            color: var(--pink-dark);
+            margin-bottom: 1.2rem;
+            font-size: 1.5rem;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .social-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 22px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            color: white;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        }
+
+        .social-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+        }
+
+        .instagram-btn {
+            background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+        }
+
+        .whatsapp-btn {
+            background-color: #25D366;
+        }
+
+        .maps-btn {
+            background-color: #4285F4;
+        }
+
+        /* السلة الجانبية Modal */
+        .cart-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .cart-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 450px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #888;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
         }
 
         footer {
@@ -167,23 +312,27 @@
             color: var(--white);
             text-align: center;
             padding: 1.8rem;
-            margin-top: 4rem;
         }
     </style>
 </head>
 <body>
 
     <header>
+        <div class="cart-icon-btn" onclick="toggleCart()">
+            <i class="fas fa-shopping-basket"></i>
+            <span>السلة</span>
+            <span class="cart-count" id="cartCount">0</span>
+        </div>
         <h1>Patisserie Vanilla</h1>
         <p>باتيسري فانيلا - أطعم الحلويات والمخبوزات بأعلى جودة</p>
     </header>
 
     <div class="filter-container">
-        <button class="filter-btn active" onclick="filterCategory('all')">الكل</button>
-        <button class="filter-btn" onclick="filterCategory('cakes')">الكيك والتشيز كيك</button>
-        <button class="filter-btn" onclick="filterCategory('eastern')">الحلى الشرقي</button>
-        <button class="filter-btn" onclick="filterCategory('bakery')">المخبوزات والدونات</button>
-        <button class="filter-btn" onclick="filterCategory('nawashef')">النواشف والمعمول</button>
+        <button class="filter-btn active" onclick="filterCategory('all', event)">الكل</button>
+        <button class="filter-btn" onclick="filterCategory('cakes', event)">الكيك والتشيز كيك</button>
+        <button class="filter-btn" onclick="filterCategory('eastern', event)">الحلى الشرقي</button>
+        <button class="filter-btn" onclick="filterCategory('bakery', event)">المخبوزات والدونات</button>
+        <button class="filter-btn" onclick="filterCategory('nawashef', event)">النواشف والمعمول</button>
     </div>
 
     <div class="container">
@@ -199,7 +348,10 @@
                             <h3>قوالب الكيك والجاتو</h3>
                             <p>تصاميم فاخرة لمختلف المناسبات والسهرات بنكهات مميزة.</p>
                         </div>
-                        <a href="#" class="order-btn">اطلب الآن</a>
+                        <div class="btn-group">
+                            <button class="add-cart-btn" onclick="addToCart('قوالب الكيك والجاتو')"><i class="fas fa-plus"></i> للسلة</button>
+                            <button class="order-btn" onclick="directOrder('قوالب الكيك والجاتو')">اطلب الآن</button>
+                        </div>
                     </div>
                 </div>
                 <div class="card">
@@ -209,7 +361,10 @@
                             <h3>قطع الكيك والجاتو</h3>
                             <p>شرائح كيك غنية ومتنوعة يومياً (ريد فيلفيت، شوكولاتة، وجزر).</p>
                         </div>
-                        <a href="#" class="order-btn">اطلب الآن</a>
+                        <div class="btn-group">
+                            <button class="add-cart-btn" onclick="addToCart('قطع الكيك والجاتو')"><i class="fas fa-plus"></i> للسلة</button>
+                            <button class="order-btn" onclick="directOrder('قطع الكيك والجاتو')">اطلب الآن</button>
+                        </div>
                     </div>
                 </div>
                 <div class="card">
@@ -219,7 +374,10 @@
                             <h3>التشيز كيك</h3>
                             <p>تشيز كيك أوريو وفاخر بقوام كريمي وطعم لا يُقاوم.</p>
                         </div>
-                        <a href="#" class="order-btn">اطلب الآن</a>
+                        <div class="btn-group">
+                            <button class="add-cart-btn" onclick="addToCart('التشيز كيك')"><i class="fas fa-plus"></i> للسلة</button>
+                            <button class="order-btn" onclick="directOrder('التشيز كيك')">اطلب الآن</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -230,13 +388,16 @@
             <h2 class="section-title">الحلى الشرقي</h2>
             <div class="grid">
                 <div class="card">
-                    <img src="eastern-sweets.jpg" alt="حلى شرقي مشكل Patisserie Vanilla">
+                    <img src="eastern-sweets.jpg" alt="حلى شرقي مشكل">
                     <div class="card-body">
                         <div>
                             <h3>حلى شرقي مشكل</h3>
                             <p>علبة Patisserie Vanilla الفاخرة من البقلاوة والمشكلات بالفستق والكاجو بالسمن البلدي الأصيل.</p>
                         </div>
-                        <a href="#" class="order-btn">اطلب الآن</a>
+                        <div class="btn-group">
+                            <button class="add-cart-btn" onclick="addToCart('حلى شرقي مشكل')"><i class="fas fa-plus"></i> للسلة</button>
+                            <button class="order-btn" onclick="directOrder('حلى شرقي مشكل')">اطلب الآن</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -253,7 +414,10 @@
                             <h3>الدونات الهشة</h3>
                             <p>تشكيلة دونات طازجة بتغطيات الشوكولاتة، الكراميل، اللوتس، والفستق.</p>
                         </div>
-                        <a href="#" class="order-btn">اطلب الآن</a>
+                        <div class="btn-group">
+                            <button class="add-cart-btn" onclick="addToCart('الدونات الهشة')"><i class="fas fa-plus"></i> للسلة</button>
+                            <button class="order-btn" onclick="directOrder('الدونات الهشة')">اطلب الآن</button>
+                        </div>
                     </div>
                 </div>
                 <div class="card">
@@ -263,7 +427,10 @@
                             <h3>خبز التوست والمخبوزات</h3>
                             <p>خبز توست طويل، خبز برجر، وصامولي طازج ومحمص يومياً لإفطارك المميز.</p>
                         </div>
-                        <a href="#" class="order-btn">اطلب الآن</a>
+                        <div class="btn-group">
+                            <button class="add-cart-btn" onclick="addToCart('خبز التوست والمخبوزات')"><i class="fas fa-plus"></i> للسلة</button>
+                            <button class="order-btn" onclick="directOrder('خبز التوست والمخبوزات')">اطلب الآن</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -280,7 +447,10 @@
                             <h3>معمول التمر الفاخر</h3>
                             <p>طعم أصيل هَشّ يُحضر بالسمن الفاخر والبلدي ليذوب في الفم.</p>
                         </div>
-                        <a href="#" class="order-btn">اطلب الآن</a>
+                        <div class="btn-group">
+                            <button class="add-cart-btn" onclick="addToCart('معمول التمر الفاخر')"><i class="fas fa-plus"></i> للسلة</button>
+                            <button class="order-btn" onclick="directOrder('معمول التمر الفاخر')">اطلب الآن</button>
+                        </div>
                     </div>
                 </div>
                 <div class="card">
@@ -290,17 +460,23 @@
                             <h3>السابليه والكوكيز</h3>
                             <p>تشكيلة سابليه وهشة بتغطيات الشوكولاتة، المكسرات والكراميل.</p>
                         </div>
-                        <a href="#" class="order-btn">اطلب الآن</a>
+                        <div class="btn-group">
+                            <button class="add-cart-btn" onclick="addToCart('السابليه والكوكيز')"><i class="fas fa-plus"></i> للسلة</button>
+                            <button class="order-btn" onclick="directOrder('السابليه والكوكيز')">اطلب الآن</button>
+                        </div>
                     </div>
                 </div>
                 <div class="card">
-                    <img src="barazek.jpg" alt="البرازق المقرمشة">
+                    <img src="barazek.jpg" alt="البرازق الشامية">
                     <div class="card-body">
                         <div>
                             <h3>البرازق الشامية</h3>
                             <p>برازق مقرمشة غنية بالسمسم المحمص والفستق الحلبي الفاخر.</p>
                         </div>
-                        <a href="#" class="order-btn">اطلب الآن</a>
+                        <div class="btn-group">
+                            <button class="add-cart-btn" onclick="addToCart('البرازق الشامية')"><i class="fas fa-plus"></i> للسلة</button>
+                            <button class="order-btn" onclick="directOrder('البرازق الشامية')">اطلب الآن</button>
+                        </div>
                     </div>
                 </div>
                 <div class="card">
@@ -310,7 +486,10 @@
                             <h3>الغريبة الشامية</h3>
                             <p>غريبة شامية ناعمة محددة بالفستق الحلبي وتذوب بالفم.</p>
                         </div>
-                        <a href="#" class="order-btn">اطلب الآن</a>
+                        <div class="btn-group">
+                            <button class="add-cart-btn" onclick="addToCart('الغريبة الشامية')"><i class="fas fa-plus"></i> للسلة</button>
+                            <button class="order-btn" onclick="directOrder('الغريبة الشامية')">اطلب الآن</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -318,15 +497,48 @@
 
     </div>
 
+    <!-- قسم التواصل والتواصل الاجتماعي -->
+    <div class="social-section">
+        <h3>تواصل معنا واكتشف موقعنا</h3>
+        <div class="social-links">
+            <a href="https://www.instagram.com/patisserie__vanill?utm_source=ig_web_button_share_sheet&vrfl=ZDNlZDc0MzIxNw==" target="_blank" class="social-btn instagram-btn">
+                <i class="fab fa-instagram"></i> تابعنا على إنستغرام
+            </a>
+            <a href="https://wa.me/963981784506" target="_blank" class="social-btn whatsapp-btn">
+                <i class="fab fa-whatsapp"></i> تواصل عبر الواتساب (0981784506)
+            </a>
+            <a href="https://maps.google.com/?q=GWGV%2B6XM" target="_blank" class="social-btn maps-btn">
+                <i class="fas fa-map-marker-alt"></i> موقعنا على خرائط جوجل (منبج)
+            </a>
+        </div>
+    </div>
+
+    <!-- نافذة السلة الجانبية -->
+    <div class="cart-modal" id="cartModal">
+        <div class="cart-content">
+            <span class="close-btn" onclick="toggleCart()">&times;</span>
+            <h2 style="color: var(--pink-dark); margin-bottom: 1rem;">سلة الطلبات</h2>
+            <div id="cartItemsList">
+                <p style="text-align:center; color:#888;">السلة فارغة حالياً.</p>
+            </div>
+            <div style="margin-top: 1.5rem;" id="cartFooter">
+                <button class="order-btn" style="width:100%;" onclick="sendCartOrder()">إرسال الطلب عبر الواتساب</button>
+            </div>
+        </div>
+    </div>
+
     <footer>
         <p>جميع الحقوق محفوظة &copy; 2026 - Patisserie Vanilla</p>
     </footer>
 
     <script>
-        function filterCategory(category) {
+        let cart = [];
+        const phone = "963981784506";
+
+        function filterCategory(category, evt) {
             const buttons = document.querySelectorAll('.filter-btn');
             buttons.forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+            evt.target.classList.add('active');
 
             const groups = document.querySelectorAll('.category-group');
             groups.forEach(group => {
@@ -336,6 +548,58 @@
                     group.style.display = 'none';
                 }
             });
+        }
+
+        function addToCart(itemName) {
+            cart.push(itemName);
+            updateCartUI();
+            alert(`تمت إضافة "${itemName}" إلى السلة!`);
+        }
+
+        function updateCartUI() {
+            document.getElementById('cartCount').innerText = cart.length;
+            const listContainer = document.getElementById('cartItemsList');
+            
+            if (cart.length === 0) {
+                listContainer.innerHTML = '<p style="text-align:center; color:#888;">السلة فارغة حالياً.</p>';
+                return;
+            }
+
+            let html = '';
+            cart.forEach((item, index) => {
+                html += `
+                    <div class="cart-item">
+                        <span>${item}</span>
+                        <i class="fas fa-trash" style="color:red; cursor:pointer;" onclick="removeFromCart(${index})"></i>
+                    </div>
+                `;
+            });
+            listContainer.innerHTML = html;
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartUI();
+        }
+
+        function toggleCart() {
+            const modal = document.getElementById('cartModal');
+            modal.style.display = (modal.style.display === 'flex') ? 'none' : 'flex';
+        }
+
+        function directOrder(itemName) {
+            const message = encodeURIComponent(`مرحباً باتيسري فانيلا، أود طلب: ${itemName}`);
+            window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
+        }
+
+        function sendCartOrder() {
+            if (cart.length === 0) {
+                alert("السلة فارغة!");
+                return;
+            }
+            const itemsList = cart.join('\n- ');
+            const message = encodeURIComponent(`مرحباً باتيسري فانيلا، أود طلب قائمة المنتجات التالية:\n- ${itemsList}`);
+            window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
         }
     </script>
 </body>
